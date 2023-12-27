@@ -65,7 +65,7 @@ const images = [
   },
 ];
 
-const markup = images.map(({ preview, original, description } = image) => `
+const markup = images.map(({ preview, original, description }) => `
 <li class="gallery-item">
   <a class="gallery-link" href="${original}">
     <img
@@ -80,30 +80,29 @@ const markup = images.map(({ preview, original, description } = image) => `
 const gallery = document.querySelector(".gallery");
 gallery.innerHTML = markup;
 
-gallery.addEventListener("click", selectImg);
-
-function selectImg(Event) {
-  Event.preventDefault();
-
-  if (Event.target.nodeName !== "IMG") {
-    return;
-  }
-
-  const selectLink = Event.target.dataset.source;
-
-  const modalImg = basicLightbox.create(`
-    <div class="modal"><img src="${selectLink}" width="1112px" height="640px" /></div>`,
+let modalImg = basicLightbox.create(`
+    <div class="modal"><img class = "gallery-big-image" src="" width="1112" height="640"/></div>`,
     {
 	    onShow: () => { document.addEventListener("keydown", onEscPress); },
       onClose: (modalImg) => { document.removeEventListener("keydown", onEscPress) }
   });
-    
-  function onEscPress(event) {
-    if (event.code === "Escape")
+
+function onEscPress(event) {
+    if (event.key === "Escape")
     {
       modalImg.close();
     }
-  };
-   
+};  
+  
+gallery.addEventListener("click", event => {
+  event.preventDefault();
+
+  if (event.target.nodeName !== "IMG") {
+    return;
+  }
+
+  const modalImgSrc = modalImg.element().querySelector(".gallery-big-image");
+  modalImgSrc.src = event.target.dataset.source;
+     
   modalImg.show();
-}
+});

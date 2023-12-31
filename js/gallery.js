@@ -81,11 +81,20 @@ const gallery = document.querySelector(".gallery");
 gallery.innerHTML = markup;
 
 let modalImg = basicLightbox.create(`
-    <div class="modal"><img class = "gallery-big-image" src="" width="1112" height="640"/></div>`,
+    <div class="modal"><img class="gallery-big-image" src="" width="1112" height="640"/></div>`,
     {
-	    onShow: () => { document.addEventListener("keydown", onEscPress); },
-      onClose: (modalImg) => { document.removeEventListener("keydown", onEscPress) }
-  });
+	    onShow: () => { listenerKeydown(true) },
+      onClose: () => { listenerKeydown(false)}
+});
+
+function listenerKeydown(power) {
+  if (power) {
+    document.addEventListener("keydown", onEscPress)
+  }
+  else {
+    document.removeEventListener("keydown", onEscPress) 
+  }   
+}
 
 function onEscPress(event) {
     if (event.key === "Escape")
@@ -96,13 +105,14 @@ function onEscPress(event) {
   
 gallery.addEventListener("click", event => {
   event.preventDefault();
-
   if (event.target.nodeName !== "IMG") {
     return;
   }
+  modalCreate();
+});
 
+function modalCreate() {
   const modalImgSrc = modalImg.element().querySelector(".gallery-big-image");
   modalImgSrc.src = event.target.dataset.source;
-     
   modalImg.show();
-});
+};
